@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: "jdbc:mysql://localhost:3306/demolx"
+    driverClassName: "com.mysql.cj.jdbc.Driver"
+    username: root
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+
+server:
+  port: 8080
+  servlet:
+    context-path: /demo
+
+jwt:
+  signerKey: "Fx4NoxybRRfHEk5J4Z12C45rxdfAcNGkMehTCQ1qrdY6B/Mw0Ie4E+36zVliXgWN\n"
+  valid-duration: 60 #in second
+  refreshable-duration: 120 #in second
+
