@@ -1,5 +1,5 @@
 package com.daminhluxa.demoLuuXa.enums;
 
-public enum Role {
-    ADMIN, USER
+public enum SpiritRole {
+    MONK, PRIEST
 }
