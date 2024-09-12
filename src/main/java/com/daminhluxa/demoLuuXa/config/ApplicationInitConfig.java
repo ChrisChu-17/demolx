@@ -1,11 +1,14 @@
 package com.daminhluxa.demoLuuXa.config;
 
+import com.daminhluxa.demoLuuXa.constant.PredefinedRole;
+import com.daminhluxa.demoLuuXa.entity.Role;
 import com.daminhluxa.demoLuuXa.entity.User;
-import com.daminhluxa.demoLuuXa.enums.Role;
+import com.daminhluxa.demoLuuXa.repository.RoleRepository;
 import com.daminhluxa.demoLuuXa.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -24,7 +27,12 @@ public class ApplicationInitConfig {
 
     PasswordEncoder passwordEncoder;
 
-    public static final String ADMIN_USER = "admin";
+    @NonFinal
+    static final String ADMIN_USER = "admin";
+
+    @NonFinal
+    static final String ADMIN_PASSWORD = "admin";
+
 
     @Bean
     @ConditionalOnProperty(
@@ -32,15 +40,24 @@ public class ApplicationInitConfig {
             value = "datasource.driverClassName",
             havingValue = "com.mysql.cj.jdbc.Driver"
     )
-    ApplicationRunner applicationRunner(UserRepository userRepository) {
+    ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository) {
         return args -> {
            if(userRepository.findByUsername(ADMIN_USER).isEmpty()) {
-               var role = new HashSet<String>();
-               role.add(Role.ADMIN.name());
+               roleRepository.save(Role.builder()
+                               .name(PredefinedRole.USER_ROLE)
+                               .description("User Role")
+                       .build());
+               Role adminRole = roleRepository.save(Role.builder()
+                       .name(PredefinedRole.ADMIN_ROLE)
+                       .description("Admin Role")
+                       .build());
+
+               var role = new HashSet<Role>();
+               role.add(adminRole);
                User user = User.builder()
                        .username(ADMIN_USER)
-                       .password(passwordEncoder.encode("admin"))
-//                       .roles(role)
+                       .password(passwordEncoder.encode(ADMIN_PASSWORD))
+                       .roles(role)
                        .build();
 
                userRepository.save(user);

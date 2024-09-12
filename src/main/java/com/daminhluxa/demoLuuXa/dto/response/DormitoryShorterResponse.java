@@ -12,13 +12,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DormitoryCreationResponse {
-    String id;
+public class DormitoryShorterResponse {
     String name;
     LocalDate dob;
     String area;
     Address address;
     ContactInfo contactInfo;
-    String description;
-    String spiritualGuide;
 }

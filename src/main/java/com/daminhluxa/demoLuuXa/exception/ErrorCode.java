@@ -13,7 +13,11 @@ public enum ErrorCode {
     UNCATEGORIED_EXCEPTION(999, "Uncategoried Exception", HttpStatus.INTERNAL_SERVER_ERROR),
     USER_EXISTED(402, "User already existed", HttpStatus.BAD_REQUEST),
     UNAUTHORIZED(406, "Unauthorized", HttpStatus.FORBIDDEN),
-    INVALID_DOB(407, "You must be at least {min}", HttpStatus.BAD_REQUEST)
+    INVALID_DOB(407, "You must be at least {min}", HttpStatus.BAD_REQUEST),
+    INVALID_SPIRIT_ROLE(408, "Your spirit role is not in system", HttpStatus.BAD_REQUEST),
+    SPIRITUAL_GUIDE_HAS_BEEN_USED(409, "Spirit guid has been used", HttpStatus.BAD_REQUEST),
+    DORM_EXISTED(410, "Dorm already existed", HttpStatus.BAD_REQUEST),
+    DORM_NOT_FOUND(411, "Dorm not found", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String msg, HttpStatus statusCode) {

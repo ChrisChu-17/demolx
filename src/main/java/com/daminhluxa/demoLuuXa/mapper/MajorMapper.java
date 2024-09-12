@@ -1,14 +1,14 @@
 package com.daminhluxa.demoLuuXa.mapper;
-import com.daminhluxa.demoLuuXa.dto.RoleRequest;
-import com.daminhluxa.demoLuuXa.dto.response.RoleResponse;
-import com.daminhluxa.demoLuuXa.entity.Role;
+import com.daminhluxa.demoLuuXa.dto.MajorCreationRequest;
+import com.daminhluxa.demoLuuXa.dto.response.MajorResponse;
+import com.daminhluxa.demoLuuXa.entity.Major;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public interface RoleMapper {
-    @Mapping(target = "permissions", ignore = true)
-    Role toRole(RoleRequest request);
+public interface MajorMapper {
+    Major toMajor(MajorCreationRequest request);
 
-    RoleResponse toRoleResponse(Role role);
+    @Mapping(target = "id", source = "id")
+    MajorResponse toMajorResponse(Major major);
 }

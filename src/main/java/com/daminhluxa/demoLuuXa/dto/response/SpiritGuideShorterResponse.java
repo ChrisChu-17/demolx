@@ -10,11 +10,10 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SpiritGuideCreationResponse {
+public class SpiritGuideShorterResponse {
     String id;
     String firstName;
     String lastName;
-    SpiritRole spiritRole;
+    SpiritRole role;
     ContactInfo contactInfo;
-    DormitoryShorterResponse dormitoryShorterResponse;
 }

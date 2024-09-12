@@ -1,4 +1,4 @@
-package com.daminhluxa.demoLuuXa.dto.response;
+package com.daminhluxa.demoLuuXa.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class MajorResponse {
+public class SpiritGuideAssignRequest {
     String id;
-    String name;
+    String dormId;
 }

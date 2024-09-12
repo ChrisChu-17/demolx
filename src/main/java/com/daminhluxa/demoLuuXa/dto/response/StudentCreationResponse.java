@@ -1,9 +1,7 @@
-package com.daminhluxa.demoLuuXa.dto;
+package com.daminhluxa.demoLuuXa.dto.response;
 
 import com.daminhluxa.demoLuuXa.entity.Address;
 import com.daminhluxa.demoLuuXa.entity.ContactInfo;
-import com.daminhluxa.demoLuuXa.entity.Dormitory;
-import com.daminhluxa.demoLuuXa.entity.Transcript;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -15,18 +13,19 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StudentCreationRequest {
+public class StudentCreationResponse {
+    String id;
     String firstName;
     String lastName;
     LocalDate dob;
-
     ContactInfo contactInfo;
     String hostPhone;
-    Set<String> majors;
+    Set<MajorResponse> majors;
     int startYear;
     int endYear;
     Address address;
-    Set<String> schools;
-    String dormitoryId;
-    Set<String> roles;
+    Set<SchoolCreationResponse> schools;
+    DormitoryShorterResponse dormitoryId;
+    Set<TranscriptCreationResponse> transcripts;
+    Set<RoleResponse> roles;
 }

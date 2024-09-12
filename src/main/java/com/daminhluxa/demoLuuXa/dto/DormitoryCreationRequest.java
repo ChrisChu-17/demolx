@@ -1,5 +1,7 @@
 package com.daminhluxa.demoLuuXa.dto;
 
+import com.daminhluxa.demoLuuXa.entity.Address;
+import com.daminhluxa.demoLuuXa.entity.ContactInfo;
 import com.daminhluxa.demoLuuXa.validator.DobConstraint;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -12,17 +14,12 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserCreationRequest {
-
-    @Size(min = 3, message = "USERNAME_INVALID")
-    String username;
-
-    @Size(min = 5, message = "PASSWORD_INVALID")
-    String password;
-    String firstName;
-    String lastName;
-
-    @DobConstraint(min = 16, message = "INVALID_DOB")
+public class DormitoryCreationRequest {
+    String name;
     LocalDate dob;
-    String email;
+    String area;
+    Address address;
+    ContactInfo contactInfo;
+    String description;
+    String spiritualGuide;
 }

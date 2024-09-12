@@ -1,7 +1,6 @@
 package com.daminhluxa.demoLuuXa.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -15,19 +14,37 @@ import java.util.Set;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class User {
+public class Student {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
-
-    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(255) COLLATE utf8mb4_unicode_ci")
-    String username;
-    String password;
     String firstName;
     String lastName;
     LocalDate dob;
-    String email;
+
+    @Embedded
+    ContactInfo contactInfo;
+
+    String hostPhone;
+
+    @ManyToMany
+    Set<Major> majors;
+
+    int startYear;
+    int endYear;
+
+    @Embedded
+    Address address;
+
+    @OneToOne
+    Transcript transcript;
+
+    @ManyToMany
+    Set<School> schools;
+
+    @OneToOne
+    Dormitory dormitory;
 
     @ManyToMany
     Set<Role> roles;

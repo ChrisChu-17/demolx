@@ -1,4 +1,4 @@
-package com.daminhluxa.demoLuuXa.dto;
+package com.daminhluxa.demoLuuXa.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,8 +8,9 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TranscriptCreationRequest {
+public class TranscriptCreationResponse {
     String grade;
     String semester;
+    String schoolYear;
     String rating;
 }
