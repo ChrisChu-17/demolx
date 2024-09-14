@@ -2,10 +2,10 @@ package com.daminhluxa.demoLuuXa.controller;
 
 import com.daminhluxa.demoLuuXa.dto.APIResponse;
 import com.daminhluxa.demoLuuXa.dto.AssignSpiritualGuideRequest;
-import com.daminhluxa.demoLuuXa.dto.DormitoryCreationRequest;
+import com.daminhluxa.demoLuuXa.dto.dorm.DormitoryCreationRequest;
+import com.daminhluxa.demoLuuXa.dto.dorm.DormitoryUpdateRequest;
 import com.daminhluxa.demoLuuXa.dto.response.DormitoryCreationResponse;
 import com.daminhluxa.demoLuuXa.service.DormService;
-import com.daminhluxa.demoLuuXa.service.SpiritualGuideService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -34,6 +34,15 @@ public class DormController {
             @RequestBody AssignSpiritualGuideRequest request) {
         return  APIResponse.<DormitoryCreationResponse>builder()
                 .data(dormService.assignSpiritualGuide(dormId, request.getSpiritualGuideId()))
+                .build();
+    }
+
+    @PutMapping("/{dormId}")
+    public APIResponse<DormitoryCreationResponse> updateDormitory(
+            @RequestBody DormitoryUpdateRequest request,
+            @PathVariable String dormId) {
+        return APIResponse.<DormitoryCreationResponse>builder()
+                .data(dormService.updateDormitory(request, dormId))
                 .build();
     }
 

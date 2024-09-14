@@ -1,4 +1,4 @@
-package com.daminhluxa.demoLuuXa.dto;
+package com.daminhluxa.demoLuuXa.dto.guide;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

@@ -1,4 +1,4 @@
-package com.daminhluxa.demoLuuXa.dto;
+package com.daminhluxa.demoLuuXa.dto.guide;
 
 import com.daminhluxa.demoLuuXa.entity.ContactInfo;
 import lombok.*;
@@ -9,9 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SpiritGuideCreationRequest {
-    String firstName;
-    String lastName;
+public class SpiritGuideUpdateRequest {
     String spiritRole;
     ContactInfo contactInfo;
 }

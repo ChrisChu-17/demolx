@@ -1,7 +1,8 @@
 package com.daminhluxa.demoLuuXa.controller;
 
 import com.daminhluxa.demoLuuXa.dto.APIResponse;
-import com.daminhluxa.demoLuuXa.dto.SpiritGuideCreationRequest;
+import com.daminhluxa.demoLuuXa.dto.guide.SpiritGuideCreationRequest;
+import com.daminhluxa.demoLuuXa.dto.guide.SpiritGuideUpdateRequest;
 import com.daminhluxa.demoLuuXa.dto.response.SpiritGuideCreationResponse;
 import com.daminhluxa.demoLuuXa.dto.response.SpiritGuideShorterResponse;
 import com.daminhluxa.demoLuuXa.service.SpiritualGuideService;
@@ -24,6 +25,15 @@ public class SpiritualGuideController {
     APIResponse<SpiritGuideShorterResponse> addSpiritualGuide(@RequestBody SpiritGuideCreationRequest request ) {
         return APIResponse.<SpiritGuideShorterResponse>builder()
                 .data(spiritualGuideService.addSpiritGuide(request))
+                .build();
+    }
+
+    @PutMapping("/{guideId}")
+    APIResponse<SpiritGuideCreationResponse> updateInfor(
+            @RequestBody SpiritGuideUpdateRequest request,
+            @PathVariable String guideId) {
+        return APIResponse.<SpiritGuideCreationResponse>builder()
+                .data(spiritualGuideService.updateSpiritGuide(request, guideId))
                 .build();
     }
 

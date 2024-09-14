@@ -1,9 +1,7 @@
-package com.daminhluxa.demoLuuXa.dto;
+package com.daminhluxa.demoLuuXa.dto.dorm;
 
 import com.daminhluxa.demoLuuXa.entity.Address;
 import com.daminhluxa.demoLuuXa.entity.ContactInfo;
-import com.daminhluxa.demoLuuXa.validator.DobConstraint;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,12 +12,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DormitoryCreationRequest {
+public class DormitoryUpdateRequest {
     String name;
-    LocalDate dob;
     String area;
     Address address;
     ContactInfo contactInfo;
     String description;
-    String spiritualGuide;
 }

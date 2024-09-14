@@ -1,6 +1,7 @@
 package com.daminhluxa.demoLuuXa.service;
 
-import com.daminhluxa.demoLuuXa.dto.DormitoryCreationRequest;
+import com.daminhluxa.demoLuuXa.dto.dorm.DormitoryCreationRequest;
+import com.daminhluxa.demoLuuXa.dto.dorm.DormitoryUpdateRequest;
 import com.daminhluxa.demoLuuXa.dto.response.DormitoryCreationResponse;
 import com.daminhluxa.demoLuuXa.entity.Dormitory;
 import com.daminhluxa.demoLuuXa.entity.SpiritualGuide;
@@ -17,7 +18,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -60,6 +60,25 @@ public class DormService {
     public List<DormitoryCreationResponse> getDorms() {
         var dorms = dormRepository.findAll();
         return dorms.stream().map(dormMapper::toDormCreationResponse).toList();
+    }
+
+    public DormitoryCreationResponse getDorm(String id) {
+        return dormMapper.toDormCreationResponse(dormRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
+    }
+
+    public DormitoryCreationResponse updateDormitory(DormitoryUpdateRequest request, String id) {
+        dormRepository.findByName(request.getName())
+                .ifPresent(dormitory -> {
+                   throw new AppException(ErrorCode.DORM_EXISTED);
+                });
+
+        Dormitory updatedDorm = dormRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        dormMapper.updateDorm(updatedDorm, request);
+        log.info("updateDormitory id:{}", id);
+        return dormMapper.toDormCreationResponse(dormRepository.save(updatedDorm));
     }
 
     public DormitoryCreationResponse assignSpiritualGuide(String dormId, String spiritualGuideId) {
