@@ -27,6 +27,6 @@ public class StudentCreationRequest {
     int endYear;
     Address address;
     Set<String> schools;
-    String dormitoryId;
+    String dormitory;
     Set<String> roles;
 }

@@ -18,6 +18,7 @@ public interface SpiritualGuideMapper {
     SpiritGuideShorterResponse toShorterResponse(SpiritualGuide spiritualGuide);
 
     @Mapping(target = "spiritRole", source = "role")
+    @Mapping(target = "dormitory", source = "dormitory")
     SpiritGuideCreationResponse toCreationResponse(SpiritualGuide spiritualGuide);
 
     @Mapping(target = "dormitory", ignore = true)

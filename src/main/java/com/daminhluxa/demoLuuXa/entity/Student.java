@@ -43,7 +43,7 @@ public class Student {
     @ManyToMany
     Set<School> schools;
 
-    @OneToOne
+    @ManyToOne
     Dormitory dormitory;
 
     @ManyToMany

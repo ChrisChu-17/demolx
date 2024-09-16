@@ -1,4 +1,4 @@
-package com.daminhluxa.demoLuuXa.dto.response;
+package com.daminhluxa.demoLuuXa.dto;
 
 import com.daminhluxa.demoLuuXa.entity.Address;
 import lombok.*;
@@ -9,7 +9,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SchoolCreationResponse {
+public class SchoolRequest {
     String name;
+    String code;
     Address address;
 }

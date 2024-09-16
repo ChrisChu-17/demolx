@@ -18,6 +18,9 @@ public enum ErrorCode {
     SPIRITUAL_GUIDE_HAS_BEEN_USED(409, "Spirit guid has been used", HttpStatus.BAD_REQUEST),
     DORM_EXISTED(410, "Dorm already existed", HttpStatus.BAD_REQUEST),
     DORM_NOT_FOUND(411, "Dorm not found", HttpStatus.BAD_REQUEST),
+    SCHOOL_EXISTED(412, "School already existed", HttpStatus.BAD_REQUEST),
+    SCHOOL_NOT_FOUND(413, "School not found", HttpStatus.BAD_REQUEST),
+    MAJOR_NOT_FOUND(414, "Major not found", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String msg, HttpStatus statusCode) {

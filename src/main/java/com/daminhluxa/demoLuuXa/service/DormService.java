@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.stereotype.Service;
 
@@ -32,29 +33,27 @@ public class DormService {
     SpiritualGuideRepository spiritualGuideRepository;
 
     public DormitoryCreationResponse createDormitory(DormitoryCreationRequest request) {
-        dormRepository.findByName(request.getName()).ifPresent(
-                dormitory -> {
-                    throw new AppException(ErrorCode.DORM_EXISTED);
-                });
-
         SpiritualGuide spiritualGuide = spiritualGuideRepository.findById(request.getSpiritualGuide())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
 
         // Kiểm tra nếu spiritualGuide đã được gán dormitory
-        if (spiritualGuideRepository.existsByDormitory(spiritualGuide.getDormitory())) {
+        if (spiritualGuide.getDormitory() != null &&
+                spiritualGuideRepository.existsByDormitory(spiritualGuide.getDormitory())) {
             throw new AppException(ErrorCode.SPIRITUAL_GUIDE_HAS_BEEN_USED);
         }
 
         Dormitory dormitory = dormMapper.toDorm(request);
         dormitory.setSpiritualGuide(spiritualGuide);
-        Dormitory savedDormitory = dormRepository.save(dormitory);
 
-        if(spiritualGuide != null) {
+        try {
+            Dormitory savedDormitory = dormRepository.save(dormitory);
             spiritualGuide.setDormitory(savedDormitory);
             spiritualGuideRepository.save(spiritualGuide);
+            return dormMapper.toDormCreationResponse(savedDormitory);
+        } catch (DataIntegrityViolationException exception) {
+            throw new AppException(ErrorCode.DORM_EXISTED);
         }
-        return dormMapper.toDormCreationResponse(savedDormitory);
     }
 
     public List<DormitoryCreationResponse> getDorms() {
@@ -74,10 +73,9 @@ public class DormService {
                 });
 
         Dormitory updatedDorm = dormRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.DORM_NOT_FOUND));
 
         dormMapper.updateDorm(updatedDorm, request);
-        log.info("updateDormitory id:{}", id);
         return dormMapper.toDormCreationResponse(dormRepository.save(updatedDorm));
     }
 
@@ -109,6 +107,8 @@ public class DormService {
         return dormMapper.toDormCreationResponse(savedDorm);
     }
 
+
+    //Đang fix
     public void deleteDormitory(String dormId) {
         Dormitory dorm = dormRepository.findById(dormId)
                 .orElseThrow(() -> new AppException(ErrorCode.DORM_NOT_FOUND));

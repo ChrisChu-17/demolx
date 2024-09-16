@@ -24,8 +24,8 @@ public class StudentCreationResponse {
     int startYear;
     int endYear;
     Address address;
-    Set<SchoolCreationResponse> schools;
-    DormitoryShorterResponse dormitoryId;
-    Set<TranscriptCreationResponse> transcripts;
+    Set<SchoolResponse> schools;
+    DormitoryShorterResponse dormitory;
+//    Set<TranscriptCreationResponse> transcripts;
     Set<RoleResponse> roles;
 }

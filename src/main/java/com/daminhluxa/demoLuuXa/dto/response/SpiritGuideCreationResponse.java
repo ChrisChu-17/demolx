@@ -16,5 +16,5 @@ public class SpiritGuideCreationResponse {
     String lastName;
     SpiritRole spiritRole;
     ContactInfo contactInfo;
-    DormitoryShorterResponse dormitoryShorterResponse;
+    DormitoryShorterResponse dormitory;
 }
