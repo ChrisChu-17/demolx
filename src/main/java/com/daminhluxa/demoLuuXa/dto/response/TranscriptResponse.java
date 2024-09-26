@@ -8,7 +8,9 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TranscriptCreationResponse {
+public class TranscriptResponse {
+    String id;
+    String gpa;
     String grade;
     String semester;
     String schoolYear;

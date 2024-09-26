@@ -3,22 +3,30 @@ package com.daminhluxa.demoLuuXa.service;
 import com.daminhluxa.demoLuuXa.dto.dorm.DormitoryCreationRequest;
 import com.daminhluxa.demoLuuXa.dto.dorm.DormitoryUpdateRequest;
 import com.daminhluxa.demoLuuXa.dto.response.DormitoryCreationResponse;
+import com.daminhluxa.demoLuuXa.dto.response.StudentResponse;
 import com.daminhluxa.demoLuuXa.entity.Dormitory;
 import com.daminhluxa.demoLuuXa.entity.SpiritualGuide;
+import com.daminhluxa.demoLuuXa.entity.Student;
 import com.daminhluxa.demoLuuXa.exception.AppException;
 import com.daminhluxa.demoLuuXa.exception.ErrorCode;
 import com.daminhluxa.demoLuuXa.mapper.DormMapper;
+import com.daminhluxa.demoLuuXa.mapper.StudentMapper;
 import com.daminhluxa.demoLuuXa.repository.DormRepository;
 import com.daminhluxa.demoLuuXa.repository.SpiritualGuideRepository;
+import com.daminhluxa.demoLuuXa.repository.StudentRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +38,10 @@ public class DormService {
 
     DormMapper dormMapper;
 
+    StudentMapper studentMapper;
+
     SpiritualGuideRepository spiritualGuideRepository;
+    StudentRepository studentRepository;
 
     public DormitoryCreationResponse createDormitory(DormitoryCreationRequest request) {
         SpiritualGuide spiritualGuide = spiritualGuideRepository.findById(request.getSpiritualGuide())
@@ -56,9 +67,27 @@ public class DormService {
         }
     }
 
-    public List<DormitoryCreationResponse> getDorms() {
-        var dorms = dormRepository.findAll();
-        return dorms.stream().map(dormMapper::toDormCreationResponse).toList();
+    public List<DormitoryCreationResponse> getDorms(Pageable pageable) {
+        var dorms = dormRepository.findAll(pageable);
+        return dorms.map(dormMapper::toDormCreationResponse).toList();
+    }
+
+    public List<StudentResponse> getAllStudentsByDormTest(String dormId) {
+        Dormitory dormitory = dormRepository.findById(dormId)
+                .orElseThrow(() -> new AppException(ErrorCode.DORM_NOT_FOUND));
+
+        log.info(dormitory.getName().toString());
+        Set<Student> students = dormitory.getStudents();
+        return students.stream()
+                .map(studentMapper::toStudentResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<StudentResponse>getAllStudentsByDorm(String dormId, Pageable pageable) {
+        dormRepository.findById(dormId)
+                .orElseThrow(() -> new AppException(ErrorCode.DORM_NOT_FOUND));
+        Page<Student> students = studentRepository.findByDormitoryId(dormId, pageable);
+        return students.map(studentMapper::toStudentResponse).toList();
     }
 
     public DormitoryCreationResponse getDorm(String id) {
@@ -112,6 +141,7 @@ public class DormService {
     public void deleteDormitory(String dormId) {
         Dormitory dorm = dormRepository.findById(dormId)
                 .orElseThrow(() -> new AppException(ErrorCode.DORM_NOT_FOUND));
+        //do có set ON DELETE SET NULL trong database nên kh cần check set student null
 
         SpiritualGuide spiritualGuide = dorm.getSpiritualGuide();
         if(spiritualGuide != null) {

@@ -3,16 +3,11 @@ package com.daminhluxa.demoLuuXa.exception;
 import com.daminhluxa.demoLuuXa.dto.APIResponse;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 

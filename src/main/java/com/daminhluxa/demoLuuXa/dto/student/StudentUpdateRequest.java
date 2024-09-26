@@ -1,13 +1,10 @@
-package com.daminhluxa.demoLuuXa.dto;
+package com.daminhluxa.demoLuuXa.dto.student;
 
 import com.daminhluxa.demoLuuXa.entity.Address;
 import com.daminhluxa.demoLuuXa.entity.ContactInfo;
-import com.daminhluxa.demoLuuXa.entity.Dormitory;
-import com.daminhluxa.demoLuuXa.entity.Transcript;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
 import java.util.Set;
 
 @Data
@@ -15,11 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StudentCreationRequest {
-    String firstName;
-    String lastName;
-    LocalDate dob;
-
+public class StudentUpdateRequest {
     ContactInfo contactInfo;
     String hostPhone;
     Set<String> majors;

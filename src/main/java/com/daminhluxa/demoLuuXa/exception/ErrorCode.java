@@ -21,6 +21,15 @@ public enum ErrorCode {
     SCHOOL_EXISTED(412, "School already existed", HttpStatus.BAD_REQUEST),
     SCHOOL_NOT_FOUND(413, "School not found", HttpStatus.BAD_REQUEST),
     MAJOR_NOT_FOUND(414, "Major not found", HttpStatus.BAD_REQUEST),
+    STUDENT_NOT_FOUND(415, "Student not found", HttpStatus.BAD_REQUEST),
+    TRANSCRIPT_NOT_FOUND(416, "Transcript not found", HttpStatus.BAD_REQUEST),
+    INVALID_TRANSCRIPT_WITH_MIN(417, "GPA must be higher 0.0 or equal", HttpStatus.BAD_REQUEST),
+    INVALID_TRANSCRIPT_WITH_MAX(418, "GPA must be lower than 4.0 or equal", HttpStatus.BAD_REQUEST),
+    INVALID_TRANSCRIPT_GRADE(419, "Grade is not blanked", HttpStatus.BAD_REQUEST),
+    INVALID_TRANSCRIPT_SEMESTER(420, "Semester is not blanked", HttpStatus.BAD_REQUEST),
+    INVALID_TRANSCRIPT_SCHOOL_YEAR(421, "School year is not blanked", HttpStatus.BAD_REQUEST),
+    EXECUTIVE_BOARD_EXISTED(422, "Board already existed", HttpStatus.BAD_REQUEST),
+
     ;
 
     ErrorCode(int code, String msg, HttpStatus statusCode) {

@@ -1,9 +1,6 @@
 package com.daminhluxa.demoLuuXa.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -20,8 +17,12 @@ public class Transcript {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
+    String gpa;
     String grade;
     String semester;
     String schoolYear;
     String rating;
+
+    @ManyToOne
+    Student student;
 }

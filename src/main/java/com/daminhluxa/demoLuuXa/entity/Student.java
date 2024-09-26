@@ -37,13 +37,14 @@ public class Student {
     @Embedded
     Address address;
 
-    @OneToOne
-    Transcript transcript;
+    @OneToMany(cascade = CascadeType.ALL)
+    Set<Transcript> transcripts;
 
     @ManyToMany
     Set<School> schools;
 
     @ManyToOne
+    @JoinColumn(name = "dormitoryId")
     Dormitory dormitory;
 
     @ManyToMany

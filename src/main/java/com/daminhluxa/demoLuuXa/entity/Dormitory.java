@@ -28,7 +28,7 @@ public class Dormitory {
     ContactInfo contactInfo;
     String description;
 
-    @OneToMany
+    @OneToMany(mappedBy = "dormitory")
     Set<Student> students = new HashSet<>();
 
     @OneToOne

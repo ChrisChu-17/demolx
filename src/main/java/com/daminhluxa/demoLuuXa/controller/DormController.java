@@ -5,10 +5,13 @@ import com.daminhluxa.demoLuuXa.dto.AssignSpiritualGuideRequest;
 import com.daminhluxa.demoLuuXa.dto.dorm.DormitoryCreationRequest;
 import com.daminhluxa.demoLuuXa.dto.dorm.DormitoryUpdateRequest;
 import com.daminhluxa.demoLuuXa.dto.response.DormitoryCreationResponse;
+import com.daminhluxa.demoLuuXa.dto.response.StudentResponse;
 import com.daminhluxa.demoLuuXa.service.DormService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,9 +50,24 @@ public class DormController {
     }
 
     @GetMapping
-    public APIResponse<List<DormitoryCreationResponse>> findDormitory() {
+    public APIResponse<List<DormitoryCreationResponse>> findDormitory(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page - 1, size);
         return  APIResponse.<List<DormitoryCreationResponse>>builder()
-                .data(dormService.getDorms())
+                .data(dormService.getDorms(pageable))
+                .build();
+    }
+
+    @GetMapping("/{dormId}/students")
+    public APIResponse<List<StudentResponse>> getAllStudentsByDorm(
+            @PathVariable("dormId") String dormId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page-1, size);
+        return APIResponse.<List<StudentResponse>>builder()
+                .data(dormService.getAllStudentsByDorm(dormId, pageable))
                 .build();
     }
 
