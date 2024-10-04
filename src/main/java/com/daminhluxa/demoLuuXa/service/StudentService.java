@@ -13,6 +13,7 @@ import com.daminhluxa.demoLuuXa.mapper.TranscriptMapper;
 import com.daminhluxa.demoLuuXa.repository.*;
 import com.daminhluxa.demoLuuXa.specification.SearchCriteria;
 import com.daminhluxa.demoLuuXa.specification.StudentSpecification;
+import com.daminhluxa.demoLuuXa.specification.StudentSpecificationsBuilder;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -27,6 +28,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -208,17 +211,36 @@ public class StudentService {
         }
     }
 
-    public List<StudentCreationResponse> filterStudents(List<SearchCriteria> searchCriteriaList, Pageable pageable) {
-        Specification<Student> spec = null;
-        for(SearchCriteria searchCriteria : searchCriteriaList) {
-            StudentSpecification studentSpecification = new StudentSpecification(searchCriteria);
-            if(spec == null) {
-                spec = Specification.where(studentSpecification);
-            } else {
-                spec = spec.and(studentSpecification);
-            }
+//    public List<StudentCreationResponse> filterStudents(List<SearchCriteria> searchCriteriaList, Pageable pageable) {
+//        Specification<Student> spec = null;
+//        for(SearchCriteria searchCriteria : searchCriteriaList) {
+//            StudentSpecification studentSpecification = new StudentSpecification(searchCriteria);
+//            if(spec == null) {
+//                spec = Specification.where(studentSpecification);
+//            } else {
+//                spec = spec.and(studentSpecification);
+//            }
+//        }
+//        log.info("spec: {}", spec.toString() );
+//        Page<Student> filteredStudents = studentRepository.findAll(spec, pageable);
+//        return filteredStudents.map(studentMapper::toStudentCreationResponse).toList();
+//    }
+
+    public List<StudentCreationResponse> filterStudents(String filter, Pageable pageable) {
+        StudentSpecificationsBuilder builder = new StudentSpecificationsBuilder();
+        log.info("da vao");
+        Pattern pattern = Pattern.compile("([\\w\\.]+?)(:|<|>)([\\w\\-]+),");
+        Matcher matcher = pattern.matcher(filter + ",");
+        log.info("da match");
+
+        while (matcher.find()) {
+            log.info("da vao while");
+            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
+            log.info("da build");
         }
-        log.info("spec: {}", spec.toString() );
+
+
+        Specification<Student> spec = builder.build();
         Page<Student> filteredStudents = studentRepository.findAll(spec, pageable);
         return filteredStudents.map(studentMapper::toStudentCreationResponse).toList();
     }

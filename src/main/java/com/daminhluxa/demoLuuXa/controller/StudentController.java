@@ -1,14 +1,17 @@
 package com.daminhluxa.demoLuuXa.controller;
 
 import com.daminhluxa.demoLuuXa.dto.APIResponse;
+import com.daminhluxa.demoLuuXa.dto.filter.FilterRequest;
 import com.daminhluxa.demoLuuXa.dto.response.StudentResponse;
 import com.daminhluxa.demoLuuXa.dto.student.StudentCreationRequest;
 import com.daminhluxa.demoLuuXa.dto.response.StudentCreationResponse;
 import com.daminhluxa.demoLuuXa.dto.student.StudentUpdateRequest;
 import com.daminhluxa.demoLuuXa.dto.transcript.TranscriptRequest;
+import com.daminhluxa.demoLuuXa.entity.Student;
 import com.daminhluxa.demoLuuXa.service.StudentService;
 import com.daminhluxa.demoLuuXa.specification.FilterParser;
 import com.daminhluxa.demoLuuXa.specification.SearchCriteria;
+import com.daminhluxa.demoLuuXa.specification.StudentSpecificationsBuilder;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +20,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/student")
@@ -91,21 +97,33 @@ public class StudentController {
                 .build();
     }
 
+//    @GetMapping("/filter")
+//    public APIResponse<List<StudentCreationResponse>> filterStudents(
+//            @RequestParam(value = "filter", required = false) String filter,
+//            @RequestParam(name = "page", defaultValue = "1") int page,
+//            @RequestParam(name = "size", defaultValue = "10") int size
+//            ) {
+//        Pageable pageable = PageRequest.of(page - 1, size);
+//        log.info("filterStudents: {}", filter);
+//        List<SearchCriteria> searchCriteriaList = filterParser.parseFilterString(filter);
+//        log.info("searchCriteriaList: {}", searchCriteriaList);
+//        return APIResponse.<List<StudentCreationResponse>>builder()
+//                .data(studentService.filterStudents(searchCriteriaList, pageable))
+//                .build();
+//
+//    }
+
     @GetMapping("/filter")
     public APIResponse<List<StudentCreationResponse>> filterStudents(
-            @RequestParam(value = "filter", required = false) String filter,
+            @RequestParam(name = "filter", required = false) String filter,
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
-            ) {
+    ) {
         Pageable pageable = PageRequest.of(page - 1, size);
         log.info("filterStudents: {}", filter);
-        List<SearchCriteria> searchCriteriaList = filterParser.parseFilterString(filter);
-        log.info("searchCriteriaList: {}", searchCriteriaList);
+
         return APIResponse.<List<StudentCreationResponse>>builder()
-                .data(studentService.filterStudents(searchCriteriaList, pageable))
+                .data(studentService.filterStudents(filter, pageable))
                 .build();
-
     }
-
-
 }
