@@ -14,6 +14,7 @@ import com.daminhluxa.demoLuuXa.mapper.StudentMapper;
 import com.daminhluxa.demoLuuXa.repository.DormRepository;
 import com.daminhluxa.demoLuuXa.repository.SpiritualGuideRepository;
 import com.daminhluxa.demoLuuXa.repository.StudentRepository;
+import com.daminhluxa.demoLuuXa.specification.SpecificationsBuilder;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,11 +22,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -149,5 +153,30 @@ public class DormService {
             spiritualGuideRepository.save(spiritualGuide);
         }
         dormRepository.delete(dorm);
+    }
+
+    public List<DormitoryCreationResponse> filterDorm(String filter, Pageable pageable) {
+        SpecificationsBuilder<Dormitory> builder = new SpecificationsBuilder<>();
+
+        String formattedFilter = filter.endsWith(",") ? filter : filter + ",";
+        Pattern pattern = Pattern.compile("([\\w\\.]+?)(:|<|>|~)([^,]+),");
+        Matcher matcher = pattern.matcher(formattedFilter);
+
+        while (matcher.find()) {
+            String key = matcher.group(1).trim(); // Xử lý khoảng trắng
+            String operator = matcher.group(2);
+            String value = matcher.group(3).trim(); // Xử
+            builder.with(key, operator,value);
+        }
+
+        Specification<Dormitory> spec = builder.build();
+        Page<Dormitory> filteredDorm = dormRepository.findAll(spec, pageable);
+
+        return filteredDorm.map(dormMapper::toDormCreationResponse).toList();
+    }
+
+    public List<DormitoryCreationResponse> searchDorm(String search, Pageable pageable) {
+        Page<Dormitory> dormSearched = dormRepository.searchDorm(search, pageable);
+        return dormSearched.map(dormMapper::toDormCreationResponse).toList();
     }
 }

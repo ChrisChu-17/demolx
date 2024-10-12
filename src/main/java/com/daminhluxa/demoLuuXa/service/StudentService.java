@@ -1,5 +1,6 @@
 package com.daminhluxa.demoLuuXa.service;
 
+import com.daminhluxa.demoLuuXa.dto.filter.FilterRequest;
 import com.daminhluxa.demoLuuXa.dto.response.StudentResponse;
 import com.daminhluxa.demoLuuXa.dto.student.StudentCreationRequest;
 import com.daminhluxa.demoLuuXa.dto.response.StudentCreationResponse;
@@ -11,8 +12,7 @@ import com.daminhluxa.demoLuuXa.exception.ErrorCode;
 import com.daminhluxa.demoLuuXa.mapper.StudentMapper;
 import com.daminhluxa.demoLuuXa.mapper.TranscriptMapper;
 import com.daminhluxa.demoLuuXa.repository.*;
-import com.daminhluxa.demoLuuXa.specification.SearchCriteria;
-import com.daminhluxa.demoLuuXa.specification.StudentSpecification;
+import com.daminhluxa.demoLuuXa.specification.SpecificationsBuilder;
 import com.daminhluxa.demoLuuXa.specification.StudentSpecificationsBuilder;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +24,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -46,6 +55,7 @@ public class StudentService {
     DormRepository dormRepository;
     TranscriptRepository transcriptRepository;
     TranscriptMapper transcriptMapper;
+    CloudinaryService cloudinaryService;
 
     @NonFinal
     static final String HEAD_OF_DORM = "HEAD_OF_DORM";
@@ -56,8 +66,9 @@ public class StudentService {
     @NonFinal
     static final String MANAGER_OF_DORM = "MANAGER_OF_DORM";
 
-    public StudentCreationResponse addStudent(StudentCreationRequest request) {
+    public StudentCreationResponse addStudent(StudentCreationRequest request, MultipartFile file) {
         Student student = studentMapper.toStudent(request);
+        log.info("vo add");
 
         student.setMajors(getMajorsFromRequest(request));
 
@@ -69,8 +80,64 @@ public class StudentService {
 
         student.setSchools(getSchoolsFromRequest(request));
 
-        return studentMapper.toStudentCreationResponse(studentRepository.save(student));
+        Student savedStudent = studentRepository.save(student);
+
+        byte[] fileBytes = null;
+        try {
+            fileBytes = file.getBytes();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        byte[] finalFileBytes = fileBytes;
+        new Thread(() -> {
+           if (finalFileBytes != null) {
+               String fileUrl = null;
+               try {
+                   fileUrl = cloudinaryService.upload(finalFileBytes);
+               } catch (IOException e) {
+                   throw new RuntimeException(e);
+               }
+               if (fileUrl != null) {
+                   savedStudent.setImagesUrl(fileUrl);
+                   studentRepository.save(savedStudent);
+               }
+           }
+        }).start();
+
+        return studentMapper.toStudentCreationResponse(savedStudent);
     }
+
+//    public StudentCreationResponse addStudent(StudentCreationRequest request, MultipartFile file) {
+//        Student student = studentMapper.toStudent(request);
+//        log.info("vo add");
+//        if (file != null && !file.isEmpty()) {
+//            try {
+//                student.setImagesUrl(getImagesFromRequest(file));
+//            } catch (IOException e) {
+//                throw new AppException(ErrorCode.UPLOAD_FILE_FAILED);
+//            }
+//        }
+//
+//        student.setMajors(getMajorsFromRequest(request));
+//
+//        Dormitory dormitory = getDormitoryFromRequest(request);
+//        student.setDormitory(dormitory);
+//
+//        validateRolesInDormitory(request.getRoles(), dormitory);
+//        student.setRoles(getRolesFromRequest(request));
+//
+//        student.setSchools(getSchoolsFromRequest(request));
+//
+//        return studentMapper.toStudentCreationResponse(studentRepository.save(student));
+//    }
+
+
+
+    private String getImagesFromRequest(byte[] fileBytes) throws IOException {
+        return cloudinaryService.upload(fileBytes);
+    }
+
 
     private void validateRolesInDormitory(Set<String> roles, Dormitory dormitory) {
         Map<String, ErrorCode> roleErrorMessages = Map.of(
@@ -211,37 +278,28 @@ public class StudentService {
         }
     }
 
-//    public List<StudentCreationResponse> filterStudents(List<SearchCriteria> searchCriteriaList, Pageable pageable) {
-//        Specification<Student> spec = null;
-//        for(SearchCriteria searchCriteria : searchCriteriaList) {
-//            StudentSpecification studentSpecification = new StudentSpecification(searchCriteria);
-//            if(spec == null) {
-//                spec = Specification.where(studentSpecification);
-//            } else {
-//                spec = spec.and(studentSpecification);
-//            }
-//        }
-//        log.info("spec: {}", spec.toString() );
-//        Page<Student> filteredStudents = studentRepository.findAll(spec, pageable);
-//        return filteredStudents.map(studentMapper::toStudentCreationResponse).toList();
-//    }
-
     public List<StudentCreationResponse> filterStudents(String filter, Pageable pageable) {
-        StudentSpecificationsBuilder builder = new StudentSpecificationsBuilder();
-        log.info("da vao");
-        Pattern pattern = Pattern.compile("([\\w\\.]+?)(:|<|>)([\\w\\-]+),");
-        Matcher matcher = pattern.matcher(filter + ",");
-        log.info("da match");
+        SpecificationsBuilder<Student> builder = new SpecificationsBuilder<>();
+
+        String formattedFilter = filter.endsWith(",") ? filter : filter + ",";
+        Pattern pattern = Pattern.compile("([\\w\\.]+?)(:|<|>|~)([^,]+),");
+        Matcher matcher = pattern.matcher(formattedFilter);
 
         while (matcher.find()) {
-            log.info("da vao while");
-            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-            log.info("da build");
+            String key = matcher.group(1).trim(); // Xử lý khoảng trắng
+            String operator = matcher.group(2);
+            String value = matcher.group(3).trim(); // Xử
+            builder.with(key, operator,value);
         }
 
 
         Specification<Student> spec = builder.build();
         Page<Student> filteredStudents = studentRepository.findAll(spec, pageable);
         return filteredStudents.map(studentMapper::toStudentCreationResponse).toList();
+    }
+
+    public List<StudentCreationResponse> searchStudents(String keyword, Pageable pageable) {
+        Page<Student> searchedStudent = studentRepository.searchStudent(keyword, pageable);
+        return searchedStudent.map(studentMapper::toStudentCreationResponse).toList();
     }
 }

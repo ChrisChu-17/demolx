@@ -9,6 +9,12 @@ spring:
       ddl-auto: update
     show-sql: true
 
+servlet:
+  multipart:
+    enabled: true           # Kích hoạt xử lý multipart (file upload)
+    max-file-size: 20MB      # Giới hạn kích thước file tối đa có thể upload (ở đây là 10MB)
+    max-request-size: 20MB   # Giới hạn kích thước toàn bộ request (bao gồm tất cả các file và dữ liệu)
+    file-size-threshold: 2KB # Ngưỡng kích thước file để lưu tạm trong bộ nhớ (nếu nhỏ hơn ngưỡng thì lưu trong bộ nhớ tạm)
 
 server:
   port: 8080

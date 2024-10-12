@@ -7,25 +7,23 @@ import com.daminhluxa.demoLuuXa.dto.student.StudentCreationRequest;
 import com.daminhluxa.demoLuuXa.dto.response.StudentCreationResponse;
 import com.daminhluxa.demoLuuXa.dto.student.StudentUpdateRequest;
 import com.daminhluxa.demoLuuXa.dto.transcript.TranscriptRequest;
-import com.daminhluxa.demoLuuXa.entity.Student;
+import com.daminhluxa.demoLuuXa.service.CloudinaryService;
 import com.daminhluxa.demoLuuXa.service.StudentService;
-import com.daminhluxa.demoLuuXa.specification.FilterParser;
-import com.daminhluxa.demoLuuXa.specification.SearchCriteria;
-import com.daminhluxa.demoLuuXa.specification.StudentSpecificationsBuilder;
+import com.daminhluxa.demoLuuXa.utils.SortUtils;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/student")
@@ -34,12 +32,16 @@ import java.util.regex.Pattern;
 public class StudentController {
     private static final Logger log = LoggerFactory.getLogger(StudentController.class);
     StudentService studentService;
-    FilterParser filterParser;
+    CloudinaryService cloudinaryService;
 
     @PostMapping
-    public APIResponse<StudentCreationResponse> addStudent(@RequestBody StudentCreationRequest request) {
+    public APIResponse<StudentCreationResponse> addStudent(
+            @ModelAttribute StudentCreationRequest request,
+            @RequestPart("file") MultipartFile file) {
+        StudentCreationResponse response = studentService.addStudent(request, file);
+
         return APIResponse.<StudentCreationResponse>builder()
-                .data(studentService.addStudent(request))
+                .data(response)
                 .build();
     }
 
@@ -97,22 +99,6 @@ public class StudentController {
                 .build();
     }
 
-//    @GetMapping("/filter")
-//    public APIResponse<List<StudentCreationResponse>> filterStudents(
-//            @RequestParam(value = "filter", required = false) String filter,
-//            @RequestParam(name = "page", defaultValue = "1") int page,
-//            @RequestParam(name = "size", defaultValue = "10") int size
-//            ) {
-//        Pageable pageable = PageRequest.of(page - 1, size);
-//        log.info("filterStudents: {}", filter);
-//        List<SearchCriteria> searchCriteriaList = filterParser.parseFilterString(filter);
-//        log.info("searchCriteriaList: {}", searchCriteriaList);
-//        return APIResponse.<List<StudentCreationResponse>>builder()
-//                .data(studentService.filterStudents(searchCriteriaList, pageable))
-//                .build();
-//
-//    }
-
     @GetMapping("/filter")
     public APIResponse<List<StudentCreationResponse>> filterStudents(
             @RequestParam(name = "filter", required = false) String filter,
@@ -124,6 +110,32 @@ public class StudentController {
 
         return APIResponse.<List<StudentCreationResponse>>builder()
                 .data(studentService.filterStudents(filter, pageable))
+                .build();
+    }
+
+    @PostMapping("/filter")
+    public APIResponse<List<StudentCreationResponse>> filterStudents(
+            @RequestBody FilterRequest request,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(SortUtils.parseSort(request.getSort())));
+        log.info(request.toString());
+        String filter = request.getFilter();
+        return APIResponse.<List<StudentCreationResponse>>builder()
+                .data(studentService.filterStudents(filter, pageable))
+                .build();
+    }
+
+    @GetMapping("/search")
+    public APIResponse<List<StudentCreationResponse>> searchStudents(
+            @RequestParam String keyword,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        log.info("searchStudents: {}", keyword);
+        return APIResponse.<List<StudentCreationResponse>>builder()
+                .data(studentService.searchStudents(keyword, pageable))
                 .build();
     }
 }

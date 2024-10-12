@@ -12,5 +12,7 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FilterRequest {
-    List<SearchCriteria> filters;
+//    List<SearchCriteria> filters;
+    String filter;
+    String sort;
 }

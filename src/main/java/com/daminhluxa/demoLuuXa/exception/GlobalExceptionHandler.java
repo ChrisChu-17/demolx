@@ -8,6 +8,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -17,12 +19,22 @@ public class GlobalExceptionHandler {
 
     private static final String MIN_VALUE = "min";
 
-    @ExceptionHandler(value = RuntimeException.class)
-    ResponseEntity<APIResponse> runtimeExceptionHandler(RuntimeException e) {
-        APIResponse apiResponse = new APIResponse();
-        apiResponse.setCode(ErrorCode.UNCATEGORIED_EXCEPTION.getCode());
-        apiResponse.setMsg(ErrorCode.UNCATEGORIED_EXCEPTION.getMsg());
-        return  ResponseEntity.badRequest().body(apiResponse);
+//    @ExceptionHandler(value = RuntimeException.class)
+//    ResponseEntity<APIResponse> runtimeExceptionHandler(RuntimeException e) {
+//        APIResponse apiResponse = new APIResponse();
+//        apiResponse.setCode(ErrorCode.UNCATEGORIED_EXCEPTION.getCode());
+//        apiResponse.setMsg(ErrorCode.UNCATEGORIED_EXCEPTION.getMsg());
+//        return  ResponseEntity.badRequest().body(apiResponse);
+//    }
+
+    @ExceptionHandler(value = MaxUploadSizeExceededException.class)
+    public ResponseEntity<APIResponse> maxUploadSizeExceeded(MaxUploadSizeExceededException exception) {
+        ErrorCode errorCode = ErrorCode.MAX_SIZE_UPLOAD_FILE;
+        return ResponseEntity.status(errorCode.getStatusCode()).body(
+                APIResponse.builder()
+                        .data(errorCode.getMsg())
+                        .build()
+        );
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)

@@ -29,7 +29,8 @@ public enum ErrorCode {
     INVALID_TRANSCRIPT_SEMESTER(420, "Semester is not blanked", HttpStatus.BAD_REQUEST),
     INVALID_TRANSCRIPT_SCHOOL_YEAR(421, "School year is not blanked", HttpStatus.BAD_REQUEST),
     EXECUTIVE_BOARD_EXISTED(422, "Board already existed", HttpStatus.BAD_REQUEST),
-
+    UPLOAD_FILE_FAILED(423, "Upload file failed", HttpStatus.INTERNAL_SERVER_ERROR),
+    MAX_SIZE_UPLOAD_FILE(424, "Max file size exceeded", HttpStatus.INTERNAL_SERVER_ERROR),
     ;
 
     ErrorCode(int code, String msg, HttpStatus statusCode) {

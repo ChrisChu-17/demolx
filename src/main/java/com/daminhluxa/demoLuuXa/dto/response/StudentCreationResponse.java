@@ -28,4 +28,5 @@ public class StudentCreationResponse {
     DormitoryShorterResponse dormitory;
 //    Set<TranscriptCreationResponse> transcripts;
     Set<RoleResponse> roles;
+    String imagesUrl;
 }

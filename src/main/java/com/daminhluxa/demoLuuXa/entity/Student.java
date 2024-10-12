@@ -49,4 +49,6 @@ public class Student {
 
     @ManyToMany
     Set<Role> roles;
+
+    String imagesUrl;
 }

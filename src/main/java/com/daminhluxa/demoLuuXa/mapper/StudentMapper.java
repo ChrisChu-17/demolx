@@ -24,6 +24,7 @@ public interface StudentMapper {
     @Mapping(target = "dormitory", ignore = true)
     void updateStudent(@MappingTarget Student student, StudentUpdateRequest request) ;
 
+    @Mapping(target = "imagesUrl", source = "imagesUrl")
     StudentCreationResponse toStudentCreationResponse(Student student);
 
     StudentResponse toStudentResponse(Student student);
